@@ -17,6 +17,10 @@
     "app/(auth)/sign-up.jsx",
     "app/(auth)/sign-in.jsx",
     "app/index.jsx",
-    "app/(tabs)/home.jsx"
-, "app/search/[query].jsx", "app/(tabs)/profile.jsx"  ]
+    "app/(tabs)/home.jsx",
+    "app/search/[query].jsx",
+    "app/(tabs)/profile.jsx",
+    "app/(tabs)/bookmark.jsx",
+    "app/(tabs)/create.jsx"
+  ]
 }

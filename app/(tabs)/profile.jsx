@@ -4,23 +4,24 @@ import {
   FlatList,
   Image,
   RefreshControl,
-  Alert,
+  TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "@/components/EmptyState";
-import { images } from "@/constants";
-import { getAllPosts, getLatestPosts } from "@/lib/appwrite";
+import { icons } from "@/constants";
+import { getUserPosts, signOut } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
 import VideoCard from "@/components/VideoCard";
+import InfoBox from "@/components/InfoBox";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { router } from "expo-router";
 
 const Profile = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [activeVideo, setActiveVideo] = useState(null);
-  const { data: posts, refetch } = useAppwrite(getAllPosts);
-  const { data: latestPosts } = useAppwrite(getLatestPosts);
   const { user, setUser, isLoggedIn } = useGlobalContext();
+  const { data: posts, refetch } = useAppwrite(() => getUserPosts(user.$id));
 
   const localVideos = [
     {
@@ -79,6 +80,14 @@ const Profile = () => {
     },
   ];
 
+  const logout = async () => {
+    await signOut();
+    setUser(null);
+    isLoggedIn(false);
+
+    router.replace("/sign-in");
+  };
+
   const onRefresh = async () => {
     setRefreshing(true);
     await refetch();
@@ -99,31 +108,52 @@ const Profile = () => {
           />
         )}
         ListHeaderComponent={() => (
-          <View className="px-4 my-6 space-y-6">
-            <View className="flex-row items-start justify-between mb-6">
-              <View>
-                <Text className="text-sm text-gray-100 font-pmedium">
-                  Welcome back,
-                </Text>
-                <Text className="text-2xl text-white font-psemibold">
-                  Vansh
-                </Text>
-              </View>
+          <View className="items-center justify-center w-full px-4 my-10">
+            <TouchableOpacity
+              className="items-end w-full mb-2"
+              onPress={logout}
+            >
+              <Image
+                source={icons.logout}
+                className="size-8"
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
 
-              <View className="mt-1.5">
-                <Image
-                  source={images.logoSmall}
-                  className="h-10 w-9"
-                  resizeMode="contain"
-                />
-              </View>
+            <View className="items-center justify-center border rounded-lg size-20 border-secondary">
+              <Image
+                source={{ uri: user?.avatar }}
+                className="w-full h-full rounded-lg"
+                resizeMode="contain"
+              />
+            </View>
+
+            <InfoBox
+              title={user?.username}
+              containerStyles={"mt-5"}
+              titleStyles={"text-3xl"}
+              subtitle={user?.email}
+            />
+
+            <View className="flex-row mt-5">
+              <InfoBox
+                title={posts?.length || 0}
+                containerStyles={"mr-10"}
+                titleStyles={"text-xl"}
+                subtitle={"Posts"}
+              />
+              <InfoBox
+                title={"1.2k"}
+                titleStyles={"text-xl"}
+                subtitle={"Followers"}
+              />
             </View>
           </View>
         )}
         ListEmptyComponent={() => (
           <EmptyState
-            title={"No Videos Found"}
-            subtitle="Be the first one to upload a video"
+            title={"No videos created yet"}
+            subtitle="Upload your first video!"
           />
         )}
         refreshControl={

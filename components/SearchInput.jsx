@@ -14,9 +14,9 @@ const SearchInput = ({ initailValue }) => {
   const [query, setQuery] = useState(initailValue || "");
   const pathname = usePathname();
   return (
-    <View className="relative w-full h-16 bg-black-100 rounded-2xl items-center  flex-row justify-center">
+    <View className="relative flex-row items-center justify-center w-full h-16 bg-black-100 rounded-2xl">
       <TextInput
-        className="flex-1 h-full w-full px-4 rounded-2xl border-black-200 text-white border-2 focus:border-secondary text-xl font-pregular"
+        className="flex-1 w-full h-full px-4 text-xl text-white border-2 rounded-2xl border-black-200 focus:border-secondary font-pregular"
         value={query}
         placeholder="Search topic for videos"
         onChangeText={setQuery}

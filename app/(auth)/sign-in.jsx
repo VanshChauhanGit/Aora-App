@@ -15,7 +15,7 @@ const SignIn = () => {
     password: "",
   });
   const [isSubmiting, setIsSubmiting] = useState(false);
-  const { isLoading, setIsLoggedIn } = useGlobalContext();
+  const { isLoading, setIsLoggedIn, setUser } = useGlobalContext();
 
   const submit = async () => {
     if (!form.email || !form.password) {
@@ -41,13 +41,13 @@ const SignIn = () => {
   return (
     <SafeAreaView className="h-full bg-primary">
       <ScrollView contentContainerStyle={{ height: "90%" }}>
-        <View className="justify-center items-center w-full h-full px-4 my-6">
+        <View className="items-center justify-center w-full h-full px-4 my-6">
           <Image
             source={images.logo}
             className="w-[130px] h-[84px]"
             resizeMode="contain"
           />
-          <Text className="text-white text-2xl font-semibold font-psemibold mt-10">
+          <Text className="mt-10 text-2xl font-semibold text-white font-psemibold">
             Log in to Aora
           </Text>
           <FormField
@@ -73,13 +73,13 @@ const SignIn = () => {
             containerStyles="mt-7 w-full"
           />
 
-          <View className="justify-center pt-5 flex-row gap-2">
-            <Text className="text-gray-100 text-lg font-pregular">
+          <View className="flex-row justify-center gap-2 pt-5">
+            <Text className="text-lg text-gray-100 font-pregular">
               Don't have an account?
             </Text>
             <Link
               href="/sign-up"
-              className="text-secondary text-lg font-psemibold"
+              className="text-lg text-secondary font-psemibold"
             >
               Sign Up
             </Link>

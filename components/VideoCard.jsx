@@ -32,11 +32,11 @@ const VideoCard = ({
   return (
     <View className="flex-col items-center px-4 mb-12">
       {isActive ? (
-        <View className="w-full mb-3 rounded-xl h-60 justify-center items-center">
+        <View className="items-center justify-center w-full mb-3 rounded-xl h-60">
           <VideoView
             player={player}
             style={{ width: "100%", height: "100%" }}
-            className="rounded-xl border border-secondary"
+            className="border rounded-xl border-secondary"
             allowsFullscreen
             allowsPictureInPicture
             startsPictureInPictureAutomatically
@@ -51,7 +51,7 @@ const VideoCard = ({
         >
           <Image
             source={{ uri: thumbnail }}
-            className="w-full h-full rounded-xl border border-secondary/10"
+            className="w-full h-full border rounded-xl border-secondary/10"
             resizeMode="cover"
           />
 

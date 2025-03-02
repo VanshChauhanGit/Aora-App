@@ -15,9 +15,9 @@ const FormField = ({
   return (
     <View className={`gap-2 ${otherStyles}`}>
       <Text className="text-base text-gray-100 font-pmedium">{title}</Text>
-      <View className="w-full h-16 bg-black-100 rounded-2xl border-2 border-black-200 px-4 items-center focus:border-secondary flex-row justify-center">
+      <View className="relative flex-row items-center justify-center w-full h-16 bg-black-100 rounded-2xl">
         <TextInput
-          className="flex-1 text-white font-psemibold text-lg mt-1"
+          className="flex-1 w-full h-full px-4 text-lg text-white border-2 border-black-200 rounded-2xl font-psemibold focus:border-secondary"
           value={value}
           placeholder={placeholder}
           onChangeText={handleChangeText}
@@ -27,10 +27,13 @@ const FormField = ({
         />
 
         {title === "Password" && (
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <TouchableOpacity
+            className="absolute right-4"
+            onPress={() => setShowPassword(!showPassword)}
+          >
             <Image
               source={!showPassword ? icons.eye : icons.eyeHide}
-              className="h-6 w-6"
+              className="size-6"
               resizeMode="contain"
             />
           </TouchableOpacity>

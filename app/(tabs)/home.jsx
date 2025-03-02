@@ -108,7 +108,7 @@ const Home = () => {
                   Welcome back,
                 </Text>
                 <Text className="text-2xl text-white font-psemibold">
-                  {user.username}
+                  {user?.username}
                 </Text>
               </View>
 
