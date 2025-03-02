@@ -2,24 +2,34 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { icons } from "@/constants";
 import { useVideoPlayer, VideoView } from "expo-video";
+import { savePostToBookmark } from "@/lib/appwrite";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const VideoCard = ({
   video: {
     title,
+    $id: videoId,
     thumbnail,
-    video,
+    video: videoUrl,
     creator: { username, avatar },
   },
   isActive,
   setActiveVideo,
   isLocalStorage = false,
 }) => {
-  const player = useVideoPlayer(video, (player) => {
-    player.play();
-    player.staysActiveInBackground = true;
+  const [menuOpened, setMenuOpened] = useState(false);
+  const player = useVideoPlayer(videoUrl, (player) => {
     player.allowsExternalPlayback = true;
     player.allowsPictureInPicturePlayback = true;
   });
+
+  const { user } = useGlobalContext();
+
+  const handleSavePost = async () => {
+    setMenuOpened(false);
+    await savePostToBookmark(videoId, user.$id);
+    return;
+  };
 
   useEffect(() => {
     if (isActive) {
@@ -89,7 +99,39 @@ const VideoCard = ({
         </View>
 
         <View className="pt-2">
-          <Image source={icons.menu} className="size-5" resizeMode="contain" />
+          <TouchableOpacity onPress={() => setMenuOpened(!menuOpened)}>
+            <Image
+              source={icons.menu}
+              className="size-6"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+
+          {menuOpened && (
+            <View className="absolute z-50 bg-black-100 rounded-lg right-3 top-10 w-[111px] border border-black-200 flex-col pl-4 justify-evenly">
+              <TouchableOpacity
+                className="flex-row items-center py-2 gap-x-2"
+                onPress={handleSavePost}
+              >
+                <Image
+                  source={icons.bookmark}
+                  className="size-4"
+                  resizeMode="contain"
+                />
+                <Text className="text-white">Save</Text>
+              </TouchableOpacity>
+              {/* <TouchableOpacity>
+                <View className="flex-row items-center gap-x-2">
+                  <Image
+                    source={icons.eye}
+                    className="size-3"
+                    resizeMode="contain"
+                  />
+                  <Text className="text-white">Save</Text>
+                </View>
+              </TouchableOpacity> */}
+            </View>
+          )}
         </View>
       </View>
     </View>

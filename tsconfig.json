@@ -20,7 +20,7 @@
     "app/(tabs)/home.jsx",
     "app/search/[query].jsx",
     "app/(tabs)/profile.jsx",
-    "app/(tabs)/bookmark.jsx",
+    "app/(tabs)/saved.jsx",
     "app/(tabs)/create.jsx"
   ]
 }

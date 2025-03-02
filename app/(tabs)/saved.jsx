@@ -1,28 +1,23 @@
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  RefreshControl,
-  Alert,
-} from "react-native";
+import { View, Text, FlatList, Image, RefreshControl } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchInput from "@/components/SearchInput";
 import EmptyState from "@/components/EmptyState";
 import { images } from "@/constants";
-import Trending from "@/components/Trending";
-import { getAllPosts, getLatestPosts } from "@/lib/appwrite";
+import { getUserBookmarkSavedPosts } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
 import VideoCard from "@/components/VideoCard";
 import { useGlobalContext } from "@/context/GlobalProvider";
 
-const Home = () => {
+const Saved = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [activeVideo, setActiveVideo] = useState(null);
-  const { data: posts, refetch } = useAppwrite(getAllPosts);
-  const { data: latestPosts } = useAppwrite(getLatestPosts);
   const { user, setUser, isLoggedIn } = useGlobalContext();
+  const { data: posts, refetch } = useAppwrite(() =>
+    getUserBookmarkSavedPosts(user.$id)
+  );
+
+  console.log("SAVED POSTS : ", posts);
 
   const localVideos = [
     {
@@ -101,40 +96,18 @@ const Home = () => {
           />
         )}
         ListHeaderComponent={() => (
-          <View className="px-4 my-6 space-y-6">
-            <View className="flex-row items-start justify-between mb-6">
-              <View>
-                <Text className="text-sm text-gray-100 font-pmedium">
-                  Welcome back,
-                </Text>
-                <Text className="text-2xl text-white font-psemibold">
-                  {user?.username}
-                </Text>
-              </View>
+          <View className="gap-6 px-4 my-6">
+            <Text className="text-2xl text-white font-psemibold">
+              Saved Videos
+            </Text>
 
-              <View className="mt-1.5">
-                <Image
-                  source={images.logoSmall}
-                  className="h-10 w-9"
-                  resizeMode="contain"
-                />
-              </View>
-            </View>
-
-            <SearchInput placeholder={"Search topic for videos"} />
-
-            {/* <View className="flex-1 w-full pt-5 pb-8">
-              <Text className="mb-3 text-lg text-gray-100 font-pregular">
-                Latest Videos
-              </Text>
-              <Trending posts={latestPosts ?? []} />
-            </View> */}
+            <SearchInput placeholder={"Search your saved videos"} />
           </View>
         )}
         ListEmptyComponent={() => (
           <EmptyState
-            title={"No Videos Found"}
-            subtitle="Be the first one to upload a video"
+            title={"No Saved Videos Yet"}
+            subtitle="Your saved videos will appear here"
           />
         )}
         refreshControl={
@@ -145,4 +118,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Saved;
