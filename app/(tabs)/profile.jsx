@@ -23,7 +23,6 @@ const Profile = () => {
   const { user, setUser, isLoggedIn } = useGlobalContext();
   const { data: posts, refetch } = useAppwrite(() => getUserPosts(user.$id));
 
-  // const localVideos = [
   //   {
   //     title: "Get inspired to code",
   //     thumbnail: "https://i.ibb.co/tJBcX20/Appwrite-video.png",
