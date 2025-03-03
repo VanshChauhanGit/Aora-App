@@ -17,8 +17,6 @@ const Saved = () => {
     getUserBookmarkSavedPosts(user.$id)
   );
 
-  console.log("SAVED POSTS : ", posts);
-
   const localVideos = [
     {
       title: "Get inspired to code",
@@ -101,7 +99,7 @@ const Saved = () => {
               Saved Videos
             </Text>
 
-            <SearchInput placeholder={"Search your saved videos"} />
+            {/* <SearchInput placeholder={"Search your saved videos"} /> */}
           </View>
         )}
         ListEmptyComponent={() => (

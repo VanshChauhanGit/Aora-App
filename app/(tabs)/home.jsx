@@ -1,17 +1,10 @@
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  RefreshControl,
-  Alert,
-} from "react-native";
+import { View, Text, FlatList, Image, RefreshControl } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchInput from "@/components/SearchInput";
 import EmptyState from "@/components/EmptyState";
 import { images } from "@/constants";
-import Trending from "@/components/Trending";
+// import Trending from "@/components/Trending";
 import { getAllPosts, getLatestPosts } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
 import VideoCard from "@/components/VideoCard";
@@ -21,7 +14,7 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [activeVideo, setActiveVideo] = useState(null);
   const { data: posts, refetch } = useAppwrite(getAllPosts);
-  const { data: latestPosts } = useAppwrite(getLatestPosts);
+  // const { data: latestPosts } = useAppwrite(getLatestPosts);
   const { user, setUser, isLoggedIn } = useGlobalContext();
 
   const localVideos = [
@@ -105,7 +98,7 @@ const Home = () => {
             <View className="flex-row items-start justify-between mb-6">
               <View>
                 <Text className="text-sm text-gray-100 font-pmedium">
-                  Welcome back,
+                  Welcome,
                 </Text>
                 <Text className="text-2xl text-white font-psemibold">
                   {user?.username}
