@@ -97,7 +97,7 @@ const Profile = () => {
   return (
     <SafeAreaView className="min-h-full bg-primary">
       <FlatList
-        data={localVideos}
+        data={posts}
         keyExtractor={(item) => item.title}
         renderItem={({ item }) => (
           <VideoCard
