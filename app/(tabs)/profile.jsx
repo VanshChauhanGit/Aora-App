@@ -103,7 +103,7 @@ const Profile = () => {
             video={item}
             isActive={activeVideo === item.title}
             setActiveVideo={setActiveVideo}
-            isLocalStorage={true}
+            isLocalStorage={false}
           />
         )}
         ListHeaderComponent={() => (
