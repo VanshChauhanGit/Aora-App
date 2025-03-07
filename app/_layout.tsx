@@ -44,6 +44,10 @@ export default function RootLayout() {
             name="search/[query]"
             options={{ headerShown: false }}
           />
+          <Stack.Screen
+            name="video-view/VideoPlayer"
+            options={{ headerShown: false }}
+          />
         </Stack>
       </GlobalProvider>
     </>

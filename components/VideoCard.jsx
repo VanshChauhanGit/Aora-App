@@ -4,44 +4,31 @@ import { icons } from "@/constants";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { savePostToBookmark } from "@/lib/appwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { router, useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 
 const VideoCard = ({
-  video: {
-    title,
-    $id: videoId,
-    thumbnail,
-    video: videoUrl,
-    creator: { username, avatar },
-  },
+  video,
   isActive,
   setActiveVideo,
   isLocalStorage = false,
 }) => {
   const [menuOpened, setMenuOpened] = useState(false);
-  const player = useVideoPlayer(videoUrl, (player) => {
-    player.allowsExternalPlayback = true;
-    player.allowsPictureInPicturePlayback = true;
-  });
+
+  const navigation = useNavigation();
+  const router = useRouter();
 
   const { user } = useGlobalContext();
 
   const handleSavePost = async () => {
     setMenuOpened(false);
-    await savePostToBookmark(videoId, user.$id);
+    await savePostToBookmark(video.$id, user.$id);
     return;
   };
 
-  useEffect(() => {
-    if (isActive) {
-      player.play();
-    } else {
-      player.pause();
-    }
-  }, [isActive]);
-
   return (
     <View className="flex-col items-center px-4 mb-12">
-      {isActive ? (
+      {/* {isActive ? (
         <View className="items-center justify-center w-full mb-3 rounded-xl h-60">
           <VideoView
             player={player}
@@ -71,13 +58,37 @@ const VideoCard = ({
             resizeMode="contain"
           />
         </TouchableOpacity>
-      )}
+      )} */}
+
+      <TouchableOpacity
+        onPress={() =>
+          router.push({
+            pathname: "/video-view/VideoPlayer",
+            params: { videoData: JSON.stringify(video) },
+          })
+        }
+        activeOpacity={0.7}
+        className="relative items-center justify-center w-full mb-3 rounded-xl h-60"
+      >
+        <Image
+          source={{ uri: video.thumbnail }}
+          className="w-full h-full border rounded-xl border-secondary/10"
+          resizeMode="cover"
+        />
+
+        <Image
+          source={icons.play}
+          className="absolute size-12"
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
+
       <View className="flex-row">
         <View className="flex-row items-center justify-center flex-1">
-          <View className="w-[46px] h-[46px] rounded-lg border border-secondary justify-center items-center p-0.5">
+          <View className="w-[46px] h-[46px] rounded-full border border-secondary justify-center items-center p-0.5">
             <Image
-              source={isLocalStorage ? avatar : { uri: avatar }}
-              className="w-full h-full rounded-lg"
+              source={isLocalStorage ? avatar : { uri: video.creator.avatar }}
+              className="w-full h-full rounded-full"
               resizeMode="cover"
             />
           </View>
@@ -87,13 +98,13 @@ const VideoCard = ({
               className="text-sm text-white font-psemibold"
               numberOfLines={1}
             >
-              {title}
+              {video.title}
             </Text>
             <Text
               className="text-xs text-gray-100 font-pregular"
               numberOfLines={1}
             >
-              {username}
+              {video.creator.username}
             </Text>
           </View>
         </View>
@@ -120,16 +131,6 @@ const VideoCard = ({
                 />
                 <Text className="text-white">Save</Text>
               </TouchableOpacity>
-              {/* <TouchableOpacity>
-                <View className="flex-row items-center gap-x-2">
-                  <Image
-                    source={icons.eye}
-                    className="size-3"
-                    resizeMode="contain"
-                  />
-                  <Text className="text-white">Save</Text>
-                </View>
-              </TouchableOpacity> */}
             </View>
           )}
         </View>

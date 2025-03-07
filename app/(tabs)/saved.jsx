@@ -27,7 +27,7 @@ const Saved = () => {
     <SafeAreaView className="min-h-full bg-primary">
       <FlatList
         data={posts}
-        keyExtractor={(item) => item.title}
+        keyExtractor={(item) => item.$id}
         renderItem={({ item }) => (
           <VideoCard
             video={item}
