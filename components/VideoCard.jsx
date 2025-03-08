@@ -15,7 +15,6 @@ const VideoCard = ({
 }) => {
   const [menuOpened, setMenuOpened] = useState(false);
 
-  const navigation = useNavigation();
   const router = useRouter();
 
   const { user } = useGlobalContext();
