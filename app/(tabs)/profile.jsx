@@ -5,6 +5,7 @@ import {
   Image,
   RefreshControl,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,63 +22,11 @@ const Profile = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [activeVideo, setActiveVideo] = useState(null);
   const { user, setUser, isLoggedIn } = useGlobalContext();
-  const { data: posts, refetch } = useAppwrite(() => getUserPosts(user.$id));
-
-  //   {
-  //     title: "Get inspired to code",
-  //     thumbnail: "https://i.ibb.co/tJBcX20/Appwrite-video.png",
-  //     video: require("@/assets/videos/Video1.mp4"),
-  //     prompt:
-  //       "Create a motivating AI driven video aimed at inspiring coding enthusiasts with simple language",
-  //     creator: {
-  //       username: "Vansh1411r",
-  //       avatar: require("@/assets/images/profile.png"),
-  //     },
-  //   },
-  //   {
-  //     title: "How AI Shapes Coding Future",
-  //     thumbnail: "https://i.ibb.co/Xkgk7DY/Video.png",
-  //     video: require("@/assets/videos/Video2.mp4"),
-  //     prompt: "Picture the future of coding with AI. Show AR VR",
-  //     creator: {
-  //       username: "Vansh1411r",
-  //       avatar: require("@/assets/images/logo-small.png"),
-  //     },
-  //   },
-  //   {
-  //     title: "Dalmatian's journey through Italy",
-  //     thumbnail: "https://i.ibb.co/CBYzyKh/Video-1.png",
-  //     video: require("@/assets/videos/Video3.mp4"),
-  //     prompt:
-  //       "Create a heartwarming video following the travels of dalmatian dog exploring beautiful Italy",
-  //     creator: {
-  //       username: "Vansh1411r",
-  //       avatar: require("@/assets/images/logo.png"),
-  //     },
-  //   },
-  //   {
-  //     title: "Meet small AI friends",
-  //     thumbnail: "https://i.ibb.co/7XqVPVT/Photo-1677756119517.png",
-  //     video: require("@/assets/videos/Video4.mp4"),
-  //     prompt:
-  //       "Make a video about a small blue AI robot blinking its eyes and looking at the screen",
-  //     creator: {
-  //       username: "Vansh1411r",
-  //       avatar: require("@/assets/images/empty.png"),
-  //     },
-  //   },
-  //   {
-  //     title: "Find inspiration in Every Line",
-  //     thumbnail: "https://i.ibb.co/mGfCYJY/Video-2.png",
-  //     video: require("@/assets/videos/Video5.mp4"),
-  //     prompt:
-  //       "A buy working on his laptop that sparks excitement for coding, emphasizing the endless possibilities and personal growth it offers",
-  //     creator: {
-  //       username: "Vansh1411r",
-  //       avatar: require("@/assets/images/logo-small.png"),
-  //     },
-  //   },
-  // ];
+  const {
+    data: posts,
+    refetch,
+    isLoading,
+  } = useAppwrite(() => getUserPosts(user.$id));
 
   const logout = async () => {
     await signOut();
@@ -92,6 +41,14 @@ const Profile = () => {
     await refetch();
     setRefreshing(false);
   };
+
+  if (isLoading || !posts) {
+    return (
+      <SafeAreaView className="items-center justify-center min-h-full bg-primary">
+        <ActivityIndicator size={"large"} color={"#FFA001"} />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="min-h-full bg-primary">

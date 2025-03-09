@@ -1,4 +1,11 @@
-import { View, Text, FlatList, Image, RefreshControl } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  RefreshControl,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchInput from "@/components/SearchInput";
@@ -12,8 +19,9 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
+  // const [isLoading, setIsLoading] = useState(true);
   const [activeVideo, setActiveVideo] = useState(null);
-  const { data: posts, refetch } = useAppwrite(getAllPosts);
+  const { data: posts, refetch, isLoading } = useAppwrite(getAllPosts);
   // const { data: latestPosts } = useAppwrite(getLatestPosts);
   const { user, setUser, isLoggedIn } = useGlobalContext();
 
@@ -22,6 +30,14 @@ const Home = () => {
     await refetch();
     setRefreshing(false);
   };
+
+  if (isLoading || !posts) {
+    return (
+      <SafeAreaView className="items-center justify-center min-h-full bg-primary">
+        <ActivityIndicator size={"large"} color={"#FFA001"} />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="min-h-full bg-primary">
