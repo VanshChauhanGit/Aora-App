@@ -7,6 +7,15 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import {
+  Modal,
+  ModalBackdrop,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+} from "@/components/ui/modal";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "@/components/EmptyState";
@@ -22,6 +31,7 @@ const Profile = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [activeVideo, setActiveVideo] = useState(null);
   const { user, setUser, isLoggedIn } = useGlobalContext();
+  const [showModal, setShowModal] = useState(false);
   const {
     data: posts,
     refetch,
