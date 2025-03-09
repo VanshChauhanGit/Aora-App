@@ -30,10 +30,9 @@ const Profile = () => {
 
   const logout = async () => {
     await signOut();
+    router.replace("/sign-in");
     setUser(null);
     isLoggedIn(false);
-
-    router.replace("/sign-in");
   };
 
   const onRefresh = async () => {
