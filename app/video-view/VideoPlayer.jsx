@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useVideoPlayer, VideoView } from "expo-video";
@@ -41,18 +42,18 @@ const VideoPlayer = () => {
     setRefreshing(false);
   };
 
-  // when click on other videocard then refetch the all posts
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       await refetch();
       setIsLoading(false);
     };
 
     fetchData();
-  }, [posts, refetch, player]);
+  }, [videoData]);
 
   return (
-    <SafeAreaView className="h-full bg-primary gap-3">
+    <SafeAreaView className="h-full gap-3 bg-primary">
       <View className="items-center justify-center w-full rounded-xl h-60">
         <VideoView
           player={player}
@@ -62,9 +63,43 @@ const VideoPlayer = () => {
         />
       </View>
 
+      <View className="gap-3 pb-3 mx-4 border-b border-gray-100/50">
+        <View className="">
+          <Text className="text-2xl text-white font-pregular" numberOfLines={2}>
+            {video.title}
+          </Text>
+        </View>
+
+        <View className="flex-row ">
+          <View className="flex-row items-center justify-center flex-1">
+            <View className="w-[50px] h-[50px] rounded-lg border border-secondary justify-center items-center">
+              <Image
+                source={{ uri: video.creator.avatar }}
+                className="w-full h-full rounded-lg"
+                resizeMode="cover"
+              />
+            </View>
+
+            <View className="justify-center flex-1 ml-3 gap-y-1">
+              <Text
+                className="text-xl text-gray-100 font-psemibold"
+                numberOfLines={1}
+              >
+                {video.creator.username}
+              </Text>
+            </View>
+
+            {/* Follow Button */}
+            {/* <TouchableOpacity className="items-center justify-center p-2 px-5 rounded-lg bg-secondary-100">
+                  <Text className="text-lg text-primary font-pregular">Follow</Text>
+                  </TouchableOpacity> */}
+          </View>
+        </View>
+      </View>
+
       {isLoading ? (
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-2xl text-white font-psemibold">Loading...</Text>
+        <View className="items-center justify-center flex-1">
+          <ActivityIndicator size={"large"} color="#FF9C01" />
         </View>
       ) : (
         <FlatList
@@ -72,44 +107,6 @@ const VideoPlayer = () => {
           keyExtractor={(item) => item.$id}
           renderItem={({ item }) => (
             <VideoCard video={item} isLocalStorage={false} />
-          )}
-          ListHeaderComponent={() => (
-            <View className="gap-3 mb-3 mx-4 pb-3 border-b border-gray-100/50">
-              <View className="">
-                <Text
-                  className="text-2xl text-white font-pregular"
-                  numberOfLines={2}
-                >
-                  {video.title}
-                </Text>
-              </View>
-
-              <View className="flex-row ">
-                <View className="flex-row items-center justify-center flex-1">
-                  <View className="w-[50px] h-[50px] rounded-lg border border-secondary justify-center items-center">
-                    <Image
-                      source={{ uri: video.creator.avatar }}
-                      className="w-full h-full rounded-lg"
-                      resizeMode="cover"
-                    />
-                  </View>
-
-                  <View className="justify-center flex-1 ml-3 gap-y-1">
-                    <Text
-                      className="text-xl text-gray-100 font-psemibold"
-                      numberOfLines={1}
-                    >
-                      {video.creator.username}
-                    </Text>
-                  </View>
-
-                  {/* Follow Button */}
-                  {/* <TouchableOpacity className="items-center justify-center p-2 bg-secondary-100 rounded-lg px-5">
-                  <Text className="text-lg text-primary font-pregular">Follow</Text>
-                  </TouchableOpacity> */}
-                </View>
-              </View>
-            </View>
           )}
           ListEmptyComponent={() => (
             <EmptyState
