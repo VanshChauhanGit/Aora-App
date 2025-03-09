@@ -8,6 +8,7 @@ import { getCurrentUser, SignIn as SignInUSer } from "@/lib/appwrite";
 import { images } from "@/constants";
 import { router } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { useToast } from "react-native-toast-notifications";
 
 const SignIn = () => {
   const [form, setForm] = useState({
@@ -16,10 +17,14 @@ const SignIn = () => {
   });
   const [isSubmiting, setIsSubmiting] = useState(false);
   const { isLoading, setIsLoggedIn, setUser } = useGlobalContext();
+  const toast = useToast();
 
   const submit = async () => {
     if (!form.email || !form.password) {
-      Alert.alert("Error", "Please fill all fields!");
+      toast.show("Please fill all fields!", {
+        type: "warning",
+      });
+      return;
     }
 
     setIsSubmiting(true);
@@ -31,6 +36,9 @@ const SignIn = () => {
       setIsLoggedIn(true);
 
       router.replace("/home");
+      toast.show("Logged in successfully!", {
+        type: "success",
+      });
     } catch (error) {
       console.log(error);
       Alert.alert("Error", error.message);

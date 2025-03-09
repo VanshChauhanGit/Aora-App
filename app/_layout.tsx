@@ -4,6 +4,7 @@ import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import GlobalProvider from "@/context/GlobalProvider";
+import { ToastProvider } from "react-native-toast-notifications";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,22 +35,42 @@ export default function RootLayout() {
 
   return (
     <>
+      <ToastProvider
+        placement="top"
+        duration={3000}
+        animationType="zoom-in"
+        animationDuration={250}
+        successColor="green"
+        dangerColor="red"
+        warningColor="orange"
+        normalColor="gray"
+        // icon={<Icon />}
+        // successIcon={<SuccessIcon />}
+        // dangerIcon={<DangerIcon />}
+        // warningIcon={<WarningIcon />}
+        textStyle={{ fontSize: 20 }}
+        offset={50} // offset for both top and bottom toasts
+        offsetTop={30}
+        offsetBottom={40}
+        swipeEnabled={true}
+      >
+        <GlobalProvider>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="search/[query]"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="video-view/VideoPlayer"
+              options={{ headerShown: false }}
+            />
+          </Stack>
+        </GlobalProvider>
+      </ToastProvider>
       <StatusBar style="light" backgroundColor="#161622" />
-      <GlobalProvider>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="search/[query]"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="video-view/VideoPlayer"
-            options={{ headerShown: false }}
-          />
-        </Stack>
-      </GlobalProvider>
     </>
   );
 }
