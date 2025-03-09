@@ -1,21 +1,11 @@
 import {
   View,
-  Text,
   FlatList,
   Image,
   RefreshControl,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import {
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-} from "@/components/ui/modal";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "@/components/EmptyState";
@@ -26,12 +16,16 @@ import VideoCard from "@/components/VideoCard";
 import InfoBox from "@/components/InfoBox";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { router } from "expo-router";
+import Model from "@/components/Model";
+import { useToast } from "react-native-toast-notifications";
 
 const Profile = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [activeVideo, setActiveVideo] = useState(null);
-  const { user, setUser, isLoggedIn } = useGlobalContext();
   const [showModal, setShowModal] = useState(false);
+
+  const { user, setUser, isLoggedIn } = useGlobalContext();
+  const toast = useToast();
   const {
     data: posts,
     refetch,
@@ -43,6 +37,7 @@ const Profile = () => {
     router.replace("/sign-in");
     setUser(null);
     isLoggedIn(false);
+    toast.show("Logged out successfully!", { type: "success" });
   };
 
   const onRefresh = async () => {
@@ -76,7 +71,7 @@ const Profile = () => {
           <View className="items-center justify-center w-full px-4 my-10">
             <TouchableOpacity
               className="items-end w-full mb-2"
-              onPress={logout}
+              onPress={() => setShowModal(true)}
             >
               <Image
                 source={icons.logout}
@@ -124,6 +119,11 @@ const Profile = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+      />
+      <Model
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        onLogout={logout}
       />
     </SafeAreaView>
   );
