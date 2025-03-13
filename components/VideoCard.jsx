@@ -12,7 +12,6 @@ import { useToast } from "react-native-toast-notifications";
 import RBSheet from "react-native-raw-bottom-sheet";
 
 const VideoCard = ({ video, refetch, isEditing }) => {
-  const [menuOpened, setMenuOpened] = useState(false);
   const router = useRouter();
 
   const { user } = useGlobalContext();
@@ -23,7 +22,7 @@ const VideoCard = ({ video, refetch, isEditing }) => {
   const isSaved = video.saved?.some((savedUser) => savedUser.$id === user.$id);
 
   const handleSavePost = async () => {
-    setMenuOpened(false);
+    refRBSheet.current.close();
     try {
       await savePostToBookmark(video.$id, user.$id);
       refetch();
