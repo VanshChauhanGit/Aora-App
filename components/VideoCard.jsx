@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { icons } from "@/constants";
 import {
   savePostToBookmark,
@@ -9,6 +9,7 @@ import {
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { useRouter } from "expo-router";
 import { useToast } from "react-native-toast-notifications";
+import RBSheet from "react-native-raw-bottom-sheet";
 
 const VideoCard = ({ video, refetch, isEditing }) => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -16,6 +17,8 @@ const VideoCard = ({ video, refetch, isEditing }) => {
 
   const { user } = useGlobalContext();
   const toast = useToast();
+
+  const refRBSheet = useRef();
 
   const isSaved = video.saved?.some((savedUser) => savedUser.$id === user.$id);
 
@@ -30,7 +33,7 @@ const VideoCard = ({ video, refetch, isEditing }) => {
   };
 
   const handleRemovePost = async () => {
-    setMenuOpened(false);
+    refRBSheet.current.close();
     try {
       await removePostFromBookmark(video.$id, user.$id);
       refetch();
@@ -40,7 +43,7 @@ const VideoCard = ({ video, refetch, isEditing }) => {
   };
 
   const handleDeletePost = async () => {
-    setMenuOpened(false);
+    refRBSheet.current.close();
     try {
       await deletePost(video.$id);
       refetch();
@@ -105,44 +108,60 @@ const VideoCard = ({ video, refetch, isEditing }) => {
         </View>
 
         <View className="pt-2">
-          <TouchableOpacity onPress={() => setMenuOpened(!menuOpened)}>
+          <TouchableOpacity onPress={() => refRBSheet.current.open()}>
             <Image
               source={icons.menu}
               className="size-6"
               resizeMode="contain"
             />
           </TouchableOpacity>
+          <RBSheet
+            ref={refRBSheet}
+            useNativeDriver={false}
+            draggable={true}
+            // dragOnContent
+            customStyles={{
+              draggableIcon: {
+                backgroundColor: "#fff",
+              },
+              container: {
+                width: "95%",
+                height: "auto",
+                borderRadius: 1,
+                alignSelf: "center",
+                backgroundColor: "#1E1E2D",
+                marginBottom: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                padding: 10,
+              },
+            }}
+            customModalProps={{
+              animationType: "slide",
+              statusBarTranslucent: true,
+            }}
+            customAvoidingViewProps={{
+              enabled: false,
+            }}
+          >
+            <View className="z-50 flex-col items-center justify-center w-full gap-2 rounded-lg bg-black-100">
+              <TouchableOpacity
+                className="flex-row items-center w-full px-5 py-3 border border-white rounded-md gap-x-5"
+                onPress={isSaved ? handleRemovePost : handleSavePost}
+              >
+                <Image
+                  source={icons.bookmark}
+                  className="size-4"
+                  resizeMode="contain"
+                />
+                <Text className="text-xl text-white">
+                  {isSaved ? "Unsave" : "Save"}
+                </Text>
+              </TouchableOpacity>
 
-          {menuOpened && (
-            <View className="absolute z-50 bg-black-100 rounded-lg right-3 top-10 w-[111px] border border-black-200 flex-col pl-4 justify-evenly py-2">
-              {isSaved ? (
-                <TouchableOpacity
-                  className="flex-row items-center py-2 gap-x-2"
-                  onPress={handleRemovePost}
-                >
-                  <Image
-                    source={icons.bookmark}
-                    className="size-4"
-                    resizeMode="contain"
-                  />
-                  <Text className="text-white">Remove</Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  className="flex-row items-center py-2 gap-x-2"
-                  onPress={handleSavePost}
-                >
-                  <Image
-                    source={icons.bookmark}
-                    className="size-4"
-                    resizeMode="contain"
-                  />
-                  <Text className="text-white">Save</Text>
-                </TouchableOpacity>
-              )}
               {isEditing && (
                 <TouchableOpacity
-                  className="flex-row items-center py-2 gap-x-2"
+                  className="flex-row items-center w-full px-5 py-3 border border-white rounded-md gap-x-5"
                   onPress={handleDeletePost}
                 >
                   <Image
@@ -151,11 +170,11 @@ const VideoCard = ({ video, refetch, isEditing }) => {
                     resizeMode="contain"
                   />
 
-                  <Text className="text-white">Delete</Text>
+                  <Text className="text-xl text-white">Delete</Text>
                 </TouchableOpacity>
               )}
             </View>
-          )}
+          </RBSheet>
         </View>
       </View>
     </View>
