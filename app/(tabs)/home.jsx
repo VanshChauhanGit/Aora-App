@@ -19,10 +19,7 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
-  // const [isLoading, setIsLoading] = useState(true);
-  const [activeVideo, setActiveVideo] = useState(null);
   const { data: posts, refetch, isLoading } = useAppwrite(getAllPosts);
-  // const { data: latestPosts } = useAppwrite(getLatestPosts);
   const { user, setUser, isLoggedIn } = useGlobalContext();
 
   const onRefresh = async () => {
@@ -44,14 +41,7 @@ const Home = () => {
       <FlatList
         data={posts}
         keyExtractor={(item) => item.title}
-        renderItem={({ item }) => (
-          <VideoCard
-            video={item}
-            isActive={activeVideo === item.title}
-            setActiveVideo={setActiveVideo}
-            isLocalStorage={false}
-          />
-        )}
+        renderItem={({ item }) => <VideoCard video={item} refetch={refetch} />}
         ListHeaderComponent={() => (
           <View className="px-4 my-6 space-y-6">
             <View className="flex-row items-start justify-between mb-6">

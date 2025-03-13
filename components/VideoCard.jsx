@@ -1,32 +1,48 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { icons } from "@/constants";
-import { savePostToBookmark } from "@/lib/appwrite";
+import { savePostToBookmark, removePostFromBookmark } from "@/lib/appwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { useRouter } from "expo-router";
 
-const VideoCard = ({ video }) => {
+const VideoCard = ({ video, refetch }) => {
   const [menuOpened, setMenuOpened] = useState(false);
-
   const router = useRouter();
 
   const { user } = useGlobalContext();
 
+  const isSaved = video.saved?.some((savedUser) => savedUser.$id === user.$id);
+
   const handleSavePost = async () => {
     setMenuOpened(false);
-    await savePostToBookmark(video.$id, user.$id);
-    return;
+    try {
+      await savePostToBookmark(video.$id, user.$id);
+      refetch();
+    } catch (error) {
+      console.error("Error saving post:", error);
+    }
+  };
+
+  const handleRemovePost = async () => {
+    setMenuOpened(false);
+    try {
+      await removePostFromBookmark(video.$id, user.$id);
+      refetch();
+    } catch (error) {
+      console.error("Error removing post:", error);
+    }
   };
 
   return (
     <View className="flex-col items-center px-4 mb-12">
       <TouchableOpacity
-        onPress={() =>
+        onPress={() => {
+          setMenuOpened(false);
           router.push({
             pathname: "/video-view/VideoPlayer",
             params: { videoData: JSON.stringify(video) },
-          })
-        }
+          });
+        }}
         activeOpacity={0.7}
         className="relative items-center justify-center w-full mb-3 rounded-xl h-60"
       >
@@ -80,17 +96,31 @@ const VideoCard = ({ video }) => {
 
           {menuOpened && (
             <View className="absolute z-50 bg-black-100 rounded-lg right-3 top-10 w-[111px] border border-black-200 flex-col pl-4 justify-evenly">
-              <TouchableOpacity
-                className="flex-row items-center py-2 gap-x-2"
-                onPress={handleSavePost}
-              >
-                <Image
-                  source={icons.bookmark}
-                  className="size-4"
-                  resizeMode="contain"
-                />
-                <Text className="text-white">Save</Text>
-              </TouchableOpacity>
+              {isSaved ? (
+                <TouchableOpacity
+                  className="flex-row items-center py-2 gap-x-2"
+                  onPress={handleRemovePost}
+                >
+                  <Image
+                    source={icons.bookmark}
+                    className="size-4"
+                    resizeMode="contain"
+                  />
+                  <Text className="text-white">Remove</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  className="flex-row items-center py-2 gap-x-2"
+                  onPress={handleSavePost}
+                >
+                  <Image
+                    source={icons.bookmark}
+                    className="size-4"
+                    resizeMode="contain"
+                  />
+                  <Text className="text-white">Save</Text>
+                </TouchableOpacity>
+              )}
             </View>
           )}
         </View>
