@@ -21,7 +21,6 @@ import { useToast } from "react-native-toast-notifications";
 
 const Profile = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const [activeVideo, setActiveVideo] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   const { user, setUser, isLoggedIn } = useGlobalContext();
@@ -60,12 +59,7 @@ const Profile = () => {
         data={posts}
         keyExtractor={(item) => item.title}
         renderItem={({ item }) => (
-          <VideoCard
-            video={item}
-            isActive={activeVideo === item.title}
-            setActiveVideo={setActiveVideo}
-            isLocalStorage={false}
-          />
+          <VideoCard video={item} refetch={refetch} isEditing={true} />
         )}
         ListHeaderComponent={() => (
           <View className="items-center justify-center w-full px-4 my-10">

@@ -1,15 +1,21 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { icons } from "@/constants";
-import { savePostToBookmark, removePostFromBookmark } from "@/lib/appwrite";
+import {
+  savePostToBookmark,
+  removePostFromBookmark,
+  deletePost,
+} from "@/lib/appwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { useRouter } from "expo-router";
+import { useToast } from "react-native-toast-notifications";
 
-const VideoCard = ({ video, refetch }) => {
+const VideoCard = ({ video, refetch, isEditing }) => {
   const [menuOpened, setMenuOpened] = useState(false);
   const router = useRouter();
 
   const { user } = useGlobalContext();
+  const toast = useToast();
 
   const isSaved = video.saved?.some((savedUser) => savedUser.$id === user.$id);
 
@@ -30,6 +36,19 @@ const VideoCard = ({ video, refetch }) => {
       refetch();
     } catch (error) {
       console.error("Error removing post:", error);
+    }
+  };
+
+  const handleDeletePost = async () => {
+    setMenuOpened(false);
+    try {
+      await deletePost(video.$id);
+      refetch();
+      toast.show("Post deleted successfully!", {
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Error deleting post:", error);
     }
   };
 
@@ -95,7 +114,7 @@ const VideoCard = ({ video, refetch }) => {
           </TouchableOpacity>
 
           {menuOpened && (
-            <View className="absolute z-50 bg-black-100 rounded-lg right-3 top-10 w-[111px] border border-black-200 flex-col pl-4 justify-evenly">
+            <View className="absolute z-50 bg-black-100 rounded-lg right-3 top-10 w-[111px] border border-black-200 flex-col pl-4 justify-evenly py-2">
               {isSaved ? (
                 <TouchableOpacity
                   className="flex-row items-center py-2 gap-x-2"
@@ -119,6 +138,20 @@ const VideoCard = ({ video, refetch }) => {
                     resizeMode="contain"
                   />
                   <Text className="text-white">Save</Text>
+                </TouchableOpacity>
+              )}
+              {isEditing && (
+                <TouchableOpacity
+                  className="flex-row items-center py-2 gap-x-2"
+                  onPress={handleDeletePost}
+                >
+                  <Image
+                    source={icons.trash}
+                    className="size-5"
+                    resizeMode="contain"
+                  />
+
+                  <Text className="text-white">Delete</Text>
                 </TouchableOpacity>
               )}
             </View>
