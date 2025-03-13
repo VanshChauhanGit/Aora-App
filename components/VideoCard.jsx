@@ -118,7 +118,6 @@ const VideoCard = ({ video, refetch, isEditing }) => {
             ref={refRBSheet}
             useNativeDriver={false}
             draggable={true}
-            // dragOnContent
             customStyles={{
               draggableIcon: {
                 backgroundColor: "#fff",
@@ -126,7 +125,7 @@ const VideoCard = ({ video, refetch, isEditing }) => {
               container: {
                 width: "95%",
                 height: "auto",
-                borderRadius: 1,
+                borderRadius: 7,
                 alignSelf: "center",
                 backgroundColor: "#1E1E2D",
                 marginBottom: 10,
