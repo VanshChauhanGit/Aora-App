@@ -96,6 +96,7 @@ const Create = () => {
             handleChangeText={(e) => setForm({ ...form, title: e })}
             otherStyles={"mt-10"}
             disable={uploading}
+            numberOfLines={5}
           />
 
           <View className="w-full gap-2 mt-7">

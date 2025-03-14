@@ -2,7 +2,6 @@ import {
   View,
   Text,
   Image,
-  TouchableOpacity,
   FlatList,
   RefreshControl,
   ActivityIndicator,
@@ -10,14 +9,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useLocalSearchParams } from "expo-router";
-import {
-  getUserPosts,
-  getSameUserPostsWithoutPlayingPost,
-} from "@/lib/appwrite";
+import { getSameUserPostsWithoutPlayingPost } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
 import EmptyState from "@/components/EmptyState";
 import VideoCard from "@/components/VideoCard";
 import { useEffect, useState } from "react";
+import { timeAgo } from "@/lib/utils";
 
 const VideoPlayer = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -67,6 +64,12 @@ const VideoPlayer = () => {
         <View className="">
           <Text className="text-2xl text-white font-pregular" numberOfLines={2}>
             {video.title}
+          </Text>
+        </View>
+
+        <View>
+          <Text className="text-sm text-gray-100 font-pregular">
+            {timeAgo(video.$createdAt)}
           </Text>
         </View>
 

@@ -10,6 +10,7 @@ import { useGlobalContext } from "@/context/GlobalProvider";
 import { useRouter } from "expo-router";
 import { useToast } from "react-native-toast-notifications";
 import RBSheet from "react-native-raw-bottom-sheet";
+import { timeAgo } from "@/lib/utils";
 
 const VideoCard = ({ video, refetch, isEditing }) => {
   const router = useRouter();
@@ -89,19 +90,28 @@ const VideoCard = ({ video, refetch, isEditing }) => {
             />
           </View>
 
-          <View className="justify-center flex-1 ml-3 gap-y-1">
+          <View className="justify-center flex-1 ml-3">
             <Text
-              className="text-sm text-white font-psemibold"
+              className="text-lg text-white font-psemibold"
               numberOfLines={1}
             >
               {video.title}
             </Text>
-            <Text
-              className="text-xs text-gray-100 font-pregular"
-              numberOfLines={1}
-            >
-              {video.creator.username}
-            </Text>
+            <View className="flex-row items-center gap-2 w-full">
+              <Text
+                className="text-md text-gray-100 font-psemibold"
+                numberOfLines={1}
+              >
+                {video.creator.username}
+              </Text>
+              <View className="size-0.5 rounded-full bg-gray-100" />
+              <Text
+                className="text-xs text-gray-100 font-pregular"
+                numberOfLines={1}
+              >
+                {timeAgo(video.$createdAt)}
+              </Text>
+            </View>
           </View>
         </View>
 
