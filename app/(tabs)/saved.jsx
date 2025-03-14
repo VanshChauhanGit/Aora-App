@@ -5,6 +5,8 @@ import {
   Image,
   RefreshControl,
   ActivityIndicator,
+  TouchableHighlight,
+  Button,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,6 +17,8 @@ import useAppwrite from "@/lib/useAppwrite";
 import VideoCard from "@/components/VideoCard";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { useFocusEffect } from "@react-navigation/native";
+import CustomButton from "@/components/CustomButton";
+import { useToast } from "react-native-toast-notifications";
 
 const Saved = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -24,6 +28,7 @@ const Saved = () => {
     refetch,
     isLoading,
   } = useAppwrite(() => getUserBookmarkSavedPosts(user.$id));
+  const toast = useToast();
 
   const onRefresh = async () => {
     setRefreshing(true);

@@ -5,8 +5,39 @@ import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import GlobalProvider from "@/context/GlobalProvider";
 import { ToastProvider } from "react-native-toast-notifications";
+import { Image, Text } from "react-native";
+import { icons, images } from "@/constants";
+import { View } from "react-native-animatable";
 
 SplashScreen.preventAutoHideAsync();
+
+const SuccessIcon = () => {
+  return (
+    <Image source={images.success} className="size-8" resizeMode="contain" />
+  );
+};
+
+const WarningIcon = () => {
+  return (
+    <Image source={images.warning} className="size-8" resizeMode="contain" />
+  );
+};
+
+const DangerIcon = () => {
+  return (
+    <Image source={images.danger} className="size-8" resizeMode="contain" />
+  );
+};
+
+const InfoIcon = () => {
+  return (
+    <Image
+      source={images.information}
+      className="size-8"
+      resizeMode="contain"
+    />
+  );
+};
 
 export default function RootLayout() {
   const [fontsLoaded, error] = useFonts({
@@ -40,16 +71,21 @@ export default function RootLayout() {
         duration={3000}
         animationType="zoom-in"
         animationDuration={250}
-        successColor="green"
-        dangerColor="red"
-        warningColor="orange"
-        normalColor="gray"
-        // icon={<Icon />}
-        // successIcon={<SuccessIcon />}
-        // dangerIcon={<DangerIcon />}
-        // warningIcon={<WarningIcon />}
-        textStyle={{ fontSize: 20 }}
-        offset={50} // offset for both top and bottom toasts
+        successColor="#aaf683"
+        dangerColor="#ff9b85"
+        warningColor="#f7ee7f"
+        normalColor="#d8e2dc"
+        successIcon={<SuccessIcon />}
+        dangerIcon={<DangerIcon />}
+        warningIcon={<WarningIcon />}
+        textStyle={{
+          fontSize: 20,
+          color: "#161622",
+          fontFamily: "Poppins-Regular",
+          width: "90%",
+          marginLeft: 10,
+        }}
+        offset={50}
         offsetTop={30}
         offsetBottom={40}
         swipeEnabled={true}
