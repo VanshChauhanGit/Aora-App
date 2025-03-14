@@ -110,8 +110,9 @@ const VideoPlayer = () => {
           )}
           ListEmptyComponent={() => (
             <EmptyState
-              title={"No Saved Videos"}
-              subtitle="Your saved videos will appear here"
+              title={"No Videos"}
+              subtitle="This user has no other videos"
+              isBtn={false}
             />
           )}
           refreshControl={

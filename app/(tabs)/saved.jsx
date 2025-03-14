@@ -69,6 +69,7 @@ const Saved = () => {
           <EmptyState
             title={"No Saved Videos Yet"}
             subtitle="Your saved videos will appear here"
+            isBtn={false}
           />
         )}
         refreshControl={
