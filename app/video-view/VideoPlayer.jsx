@@ -25,7 +25,7 @@ const VideoPlayer = () => {
     getSameUserPostsWithoutPlayingPost(video.creator.$id, video.$id)
   );
 
-  const videoUrl = require("@/assets/Video5.mp4");
+  // const videoUrl = require("@/assets/Video5.mp4");
 
   const player = useVideoPlayer(video.video, (player) => {
     player.play();
