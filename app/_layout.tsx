@@ -79,7 +79,7 @@ export default function RootLayout() {
         dangerIcon={<DangerIcon />}
         warningIcon={<WarningIcon />}
         textStyle={{
-          fontSize: 20,
+          fontSize: 14,
           color: "#161622",
           fontFamily: "Poppins-Regular",
           width: "90%",

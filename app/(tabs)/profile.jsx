@@ -33,10 +33,10 @@ const Profile = () => {
 
   const logout = async () => {
     await signOut();
+    toast.show("Logged out successfully!", { type: "success" });
     router.replace("/sign-in");
     setUser(null);
     isLoggedIn(false);
-    toast.show("Logged out successfully!", { type: "success" });
   };
 
   const onRefresh = async () => {
