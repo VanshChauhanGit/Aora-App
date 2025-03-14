@@ -58,7 +58,6 @@ const VideoCard = ({ video, refetch, isEditing }) => {
     <View className="flex-col items-center px-4 mb-12">
       <TouchableOpacity
         onPress={() => {
-          setMenuOpened(false);
           router.push({
             pathname: "/video-view/VideoPlayer",
             params: { videoData: JSON.stringify(video) },
