@@ -34,15 +34,18 @@ const SignUp = () => {
 
     try {
       const res = await createUser(form.email, form.password, form.username);
-      console.log(res);
+
       if (!res.success) {
         toast.show(res.message, { type: "warning" });
         return;
       }
-      setUser(res);
+      setUser(res.user);
       setIsLoggedIn(true);
 
       router.replace("/home");
+      toast.show(res.message, {
+        type: "success",
+      });
     } catch (error) {
       console.log(error);
       toast.show(error.message, { type: "error" });
