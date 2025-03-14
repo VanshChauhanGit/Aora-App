@@ -27,7 +27,7 @@ const VideoPlayer = () => {
 
   const videoUrl = require("@/assets/Video5.mp4");
 
-  const player = useVideoPlayer(videoUrl, (player) => {
+  const player = useVideoPlayer(video.video, (player) => {
     player.play();
     player.allowsExternalPlayback = true;
     player.allowsPictureInPicturePlayback = true;
