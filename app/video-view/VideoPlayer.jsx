@@ -5,16 +5,25 @@ import {
   FlatList,
   RefreshControl,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useLocalSearchParams } from "expo-router";
-import { getSameUserPostsWithoutPlayingPost } from "@/lib/appwrite";
+import {
+  getSameUserPostsWithoutPlayingPost,
+  isFollowingUser,
+  followUser,
+  unfollowUser,
+  getFollowers,
+} from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
 import EmptyState from "@/components/EmptyState";
 import VideoCard from "@/components/VideoCard";
 import { useEffect, useState } from "react";
 import { timeAgo } from "@/lib/utils";
+import { useGlobalContext } from "@/context/GlobalProvider";
+import { useToast } from "react-native-toast-notifications";
 
 const VideoPlayer = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -25,9 +34,12 @@ const VideoPlayer = () => {
     getSameUserPostsWithoutPlayingPost(video.creator.$id, video.$id)
   );
 
-  // const videoUrl = require("@/assets/Video5.mp4");
+  const { user, setUser, isLoggedIn } = useGlobalContext();
 
-  const player = useVideoPlayer(video.video, (player) => {
+  const videoUrl = require("@/assets/Video5.mp4");
+  const toast = useToast();
+
+  const player = useVideoPlayer(videoUrl, (player) => {
     player.play();
     player.allowsExternalPlayback = true;
     player.allowsPictureInPicturePlayback = true;
@@ -37,6 +49,42 @@ const VideoPlayer = () => {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
+  };
+
+  const { data: isFollowing, refetch: refetchFollowing } = useAppwrite(() =>
+    isFollowingUser(user.$id, video.creator.$id)
+  );
+
+  const { data: followers, refetch: refetchFollowers } = useAppwrite(() =>
+    getFollowers(video.creator.$id)
+  );
+
+  const follow = async () => {
+    try {
+      const response = await followUser(user.$id, video.creator.$id);
+      if (response.success) {
+        toast.show("Followed successfully!", { type: "success" });
+        await refetchFollowing();
+        await refetchFollowers();
+      }
+    } catch (error) {
+      console.error("Error following user:", error);
+      toast.show("Failed to follow user", { type: "danger" });
+    }
+  };
+
+  const unfollow = async () => {
+    try {
+      const response = await unfollowUser(user.$id, video.creator.$id);
+      if (response.success) {
+        toast.show("Unfollowed successfully!", { type: "success" });
+        await refetchFollowing();
+        await refetchFollowers();
+      }
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+      toast.show("Failed to unfollow user", { type: "danger" });
+    }
   };
 
   useEffect(() => {
@@ -90,12 +138,34 @@ const VideoPlayer = () => {
               >
                 {video.creator.username}
               </Text>
+              <Text
+                className="text-sm text-gray-100 font-pregular"
+                numberOfLines={1}
+              >
+                {followers.length} Followers
+              </Text>
             </View>
 
             {/* Follow Button */}
-            {/* <TouchableOpacity className="items-center justify-center p-2 px-5 rounded-lg bg-secondary-100">
-                  <Text className="text-lg text-primary font-pregular">Follow</Text>
-                  </TouchableOpacity> */}
+            {isFollowing ? (
+              <TouchableOpacity
+                onPress={unfollow}
+                className="items-center justify-center p-2 px-5 border rounded-lg bg-black-200 border-secondary"
+              >
+                <Text className="text-lg text-white font-pregular">
+                  Following
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={follow}
+                className="items-center justify-center p-2 px-5 border rounded-lg bg-secondary-100 border-black-200"
+              >
+                <Text className="text-lg text-primary font-pregular">
+                  Follow
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </View>
@@ -114,7 +184,7 @@ const VideoPlayer = () => {
           ListEmptyComponent={() => (
             <EmptyState
               title={"No Videos"}
-              subtitle="This user has no other videos"
+              subtitle="This user not uploaded other videos"
               isBtn={false}
             />
           )}
