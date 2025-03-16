@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "@/components/EmptyState";
 import { icons } from "@/constants";
-import { getUserPosts, signOut } from "@/lib/appwrite";
+import { getFollowers, getUserPosts, signOut } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
 import VideoCard from "@/components/VideoCard";
 import InfoBox from "@/components/InfoBox";
@@ -31,6 +31,10 @@ const Profile = () => {
     isLoading,
   } = useAppwrite(() => getUserPosts(user.$id));
 
+  const { data: followers, await: refetchFollowers } = useAppwrite(() =>
+    getFollowers(user.$id)
+  );
+
   const logout = async () => {
     await signOut();
     toast.show("Logged out successfully!", { type: "success" });
@@ -42,6 +46,7 @@ const Profile = () => {
   const onRefresh = async () => {
     setRefreshing(true);
     await refetch();
+    await refetchFollowers();
     setRefreshing(false);
   };
 
@@ -97,7 +102,7 @@ const Profile = () => {
                 subtitle={"Posts"}
               />
               <InfoBox
-                title={"1.2k"}
+                title={followers?.length}
                 titleStyles={"text-xl"}
                 subtitle={"Followers"}
               />
