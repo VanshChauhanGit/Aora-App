@@ -31,7 +31,7 @@ const Profile = () => {
     isLoading,
   } = useAppwrite(() => getUserPosts(user.$id));
 
-  const { data: followers, await: refetchFollowers } = useAppwrite(() =>
+  const { data: followers, refetch: refetchFollowers } = useAppwrite(() =>
     getFollowers(user.$id)
   );
 

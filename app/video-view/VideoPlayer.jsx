@@ -28,6 +28,7 @@ import { useToast } from "react-native-toast-notifications";
 const VideoPlayer = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFollowLoading, setIsFollowLoading] = useState(false);
   const { videoData } = useLocalSearchParams();
   const video = JSON.parse(videoData);
   const { data: posts, refetch } = useAppwrite(() =>
@@ -60,30 +61,36 @@ const VideoPlayer = () => {
   );
 
   const follow = async () => {
+    setIsFollowLoading(true);
     try {
       const response = await followUser(user.$id, video.creator.$id);
       if (response.success) {
-        toast.show("Followed successfully!", { type: "success" });
+        // toast.show("Followed successfully!", { type: "success" });
         await refetchFollowing();
         await refetchFollowers();
       }
     } catch (error) {
       console.error("Error following user:", error);
       toast.show("Failed to follow user", { type: "danger" });
+    } finally {
+      setIsFollowLoading(false);
     }
   };
 
   const unfollow = async () => {
+    setIsFollowLoading(true);
     try {
       const response = await unfollowUser(user.$id, video.creator.$id);
       if (response.success) {
-        toast.show("Unfollowed successfully!", { type: "success" });
+        // toast.show("Unfollowed successfully!", { type: "success" });
         await refetchFollowing();
         await refetchFollowers();
       }
     } catch (error) {
       console.error("Error unfollowing user:", error);
       toast.show("Failed to unfollow user", { type: "danger" });
+    } finally {
+      setIsFollowLoading(false);
     }
   };
 
@@ -146,11 +153,13 @@ const VideoPlayer = () => {
               </Text>
             </View>
 
-            {/* Follow Button */}
             {isFollowing ? (
               <TouchableOpacity
                 onPress={unfollow}
-                className="items-center justify-center p-2 px-5 border rounded-lg bg-black-200 border-secondary"
+                disabled={isFollowLoading}
+                className={`items-center justify-center p-2 px-5 border rounded-lg bg-black-200 border-secondary ${
+                  isFollowLoading ? "opacity-50" : ""
+                }`}
               >
                 <Text className="text-lg text-white font-pregular">
                   Following
@@ -159,7 +168,10 @@ const VideoPlayer = () => {
             ) : (
               <TouchableOpacity
                 onPress={follow}
-                className="items-center justify-center p-2 px-5 border rounded-lg bg-secondary-100 border-black-200"
+                disabled={isFollowLoading}
+                className={`items-center justify-center p-2 px-5 border rounded-lg bg-secondary-100 border-black-200 ${
+                  isFollowLoading ? "opacity-50" : ""
+                }`}
               >
                 <Text className="text-lg text-primary font-pregular">
                   Follow
