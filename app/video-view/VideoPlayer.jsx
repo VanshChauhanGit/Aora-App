@@ -16,6 +16,10 @@ import {
   followUser,
   unfollowUser,
   getFollowers,
+  getVideoLikes,
+  isVideoLiked,
+  likeVideo,
+  unlikeVideo,
 } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
 import EmptyState from "@/components/EmptyState";
@@ -24,11 +28,13 @@ import { useEffect, useState } from "react";
 import { timeAgo } from "@/lib/utils";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { useToast } from "react-native-toast-notifications";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const VideoPlayer = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isFollowLoading, setIsFollowLoading] = useState(false);
+  // const [isLiked, setIsLiked] = useState(false);
   const { videoData } = useLocalSearchParams();
   const video = JSON.parse(videoData);
   const { data: posts, refetch } = useAppwrite(() =>
@@ -58,6 +64,14 @@ const VideoPlayer = () => {
 
   const { data: followers, refetch: refetchFollowers } = useAppwrite(() =>
     getFollowers(video.creator.$id)
+  );
+
+  const { data: likes, refetch: refetchLikes } = useAppwrite(() =>
+    getVideoLikes(video.$id)
+  );
+
+  const { data: isVideoLiked, refetch: refetchIsVideoLiked } = useAppwrite(() =>
+    isVideoLiked(video.$id, user.$id)
   );
 
   const follow = async () => {
@@ -94,6 +108,38 @@ const VideoPlayer = () => {
     }
   };
 
+  const like = async () => {
+    try {
+      const response = await likeVideo(video.$id, user.$id);
+      if (response.success) {
+        toast.show("Liked successfully!", { type: "success" });
+        await refetchIsVideoLiked();
+        await refetchLikes();
+      }
+    } catch (error) {
+      console.error("Error to like the video:", error);
+      toast.show("Failed to like video", { type: "danger" });
+    } finally {
+      // setIsFollowLoading(false);
+    }
+  };
+
+  const unlike = async () => {
+    try {
+      const response = await unlikeVideo(video.$id, user.$id);
+      if (response.success) {
+        toast.show("Unliked successfully!", { type: "success" });
+        await refetchIsVideoLiked();
+        await refetchLikes();
+      }
+    } catch (error) {
+      console.error("Error to unlike the video:", error);
+      toast.show("Failed to unlike video", { type: "danger" });
+    } finally {
+      // setIsFollowLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -105,7 +151,7 @@ const VideoPlayer = () => {
   }, [videoData]);
 
   return (
-    <SafeAreaView className="h-full gap-3 bg-primary">
+    <SafeAreaView className="h-full gap-2 bg-primary">
       <View className="items-center justify-center w-full rounded-xl h-60">
         <VideoView
           player={player}
@@ -115,17 +161,41 @@ const VideoPlayer = () => {
         />
       </View>
 
-      <View className="gap-3 pb-3 mx-4 border-b border-gray-100/50">
+      <View className="gap-2 pb-2 mx-4 border-b border-gray-100/50">
         <View className="">
           <Text className="text-2xl text-white font-pregular" numberOfLines={2}>
             {video.title}
           </Text>
         </View>
-
-        <View>
+        <View className="flex-row items-center gap-2">
+          <View className="flex-row items-center gap-x-2">
+            <Image
+              source={require("@/assets/icons/eye.png")}
+              className="w-5 h-5"
+            />
+            <Text className="text-sm text-gray-100 font-pregular">
+              69 views
+            </Text>
+          </View>
+          <View className="bg-white size-0.5" />
           <Text className="text-sm text-gray-100 font-pregular">
             {timeAgo(video.$createdAt)}
           </Text>
+        </View>
+
+        <View className="flex-row items-center gap-x-2">
+          <TouchableOpacity
+            onPress={isVideoLiked ? unlike : like}
+            className="flex-row items-center justify-center p-2 px-4 rounded-full bg-gray-100/20 align-center"
+          >
+            <Icon
+              name={isVideoLiked ? "heart" : "heart-o"}
+              size={20}
+              color={isVideoLiked ? "#FF9C01" : "white"}
+              style={{ marginRight: 7 }}
+            />
+            <Text className="text-lg text-white">{likes.length}</Text>
+          </TouchableOpacity>
         </View>
 
         <View className="flex-row ">
