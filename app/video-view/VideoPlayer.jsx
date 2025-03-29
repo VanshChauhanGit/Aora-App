@@ -17,7 +17,7 @@ import {
   unfollowUser,
   getFollowers,
   getVideoLikes,
-  isVideoLiked,
+  isVideoLikedByUser,
   likeVideo,
   unlikeVideo,
 } from "@/lib/appwrite";
@@ -34,7 +34,7 @@ const VideoPlayer = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isFollowLoading, setIsFollowLoading] = useState(false);
-  // const [isLiked, setIsLiked] = useState(false);
+  const [isLikeLoading, setIsLikeLoading] = useState(false);
   const { videoData } = useLocalSearchParams();
   const video = JSON.parse(videoData);
   const { data: posts, refetch } = useAppwrite(() =>
@@ -70,8 +70,8 @@ const VideoPlayer = () => {
     getVideoLikes(video.$id)
   );
 
-  const { data: isVideoLiked, refetch: refetchIsVideoLiked } = useAppwrite(() =>
-    isVideoLiked(video.$id, user.$id)
+  const { data: isVideoLiked, refetch: refetchIsVideoLiked } = useAppwrite(
+    async () => await isVideoLikedByUser(video.$id, user.$id)
   );
 
   const follow = async () => {
@@ -109,9 +109,10 @@ const VideoPlayer = () => {
   };
 
   const like = async () => {
+    setIsLikeLoading(true);
     try {
       const response = await likeVideo(video.$id, user.$id);
-      if (response.success) {
+      if (response.success === true) {
         toast.show("Liked successfully!", { type: "success" });
         await refetchIsVideoLiked();
         await refetchLikes();
@@ -120,14 +121,15 @@ const VideoPlayer = () => {
       console.error("Error to like the video:", error);
       toast.show("Failed to like video", { type: "danger" });
     } finally {
-      // setIsFollowLoading(false);
+      setIsLikeLoading(false);
     }
   };
 
   const unlike = async () => {
+    setIsLikeLoading(true);
     try {
       const response = await unlikeVideo(video.$id, user.$id);
-      if (response.success) {
+      if (response.success === true) {
         toast.show("Unliked successfully!", { type: "success" });
         await refetchIsVideoLiked();
         await refetchLikes();
@@ -136,7 +138,7 @@ const VideoPlayer = () => {
       console.error("Error to unlike the video:", error);
       toast.show("Failed to unlike video", { type: "danger" });
     } finally {
-      // setIsFollowLoading(false);
+      setIsLikeLoading(false);
     }
   };
 
@@ -186,7 +188,10 @@ const VideoPlayer = () => {
         <View className="flex-row items-center gap-x-2">
           <TouchableOpacity
             onPress={isVideoLiked ? unlike : like}
-            className="flex-row items-center justify-center p-2 px-4 rounded-full bg-gray-100/20 align-center"
+            disabled={isLikeLoading}
+            className={`flex-row items-center justify-center p-2 px-4 rounded-full bg-gray-100/20 align-center ${
+              isLikeLoading ? "opacity-50" : ""
+            }`}
           >
             <Icon
               name={isVideoLiked ? "heart" : "heart-o"}
