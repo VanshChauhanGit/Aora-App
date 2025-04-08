@@ -43,10 +43,9 @@ const VideoPlayer = () => {
 
   const { user, setUser, isLoggedIn } = useGlobalContext();
 
-  const videoUrl = require("@/assets/Video5.mp4");
   const toast = useToast();
 
-  const player = useVideoPlayer(videoUrl, (player) => {
+  const player = useVideoPlayer(video.video, (player) => {
     player.play();
     player.allowsExternalPlayback = true;
     player.allowsPictureInPicturePlayback = true;
